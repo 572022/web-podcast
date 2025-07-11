@@ -28,7 +28,7 @@ export default function AdminLogin() {
       })
 
       localStorage.setItem('token', res.data.token)
-      navigate('/dashboard')
+      navigate('/admin/dashboard')
     } catch (err: any) {
       const msg = err.response?.data?.error || 'Lỗi đăng nhập'
       setError(msg)
