@@ -4,6 +4,7 @@ import AdminLogin from './components/AdminLogin';
 import Dashboard from './components/admin/Dashboard'
 import SidebarLayout from './components/admin/SidebarLayout'
 import ListPodcast from './components/admin/ListPodcast'
+import UploadDocument from './components/admin/UploadDocument'
 export default function App() {
   return (
     <BrowserRouter>
@@ -12,6 +13,7 @@ export default function App() {
         <Route path="/" element={<SidebarLayout />} />
         <Route path="/admin" element={<SidebarLayout />}>
         <Route index element={<Dashboard />} />
+        <Route path='/admin/upload' element={<UploadDocument />} />
         <Route path='/admin/listpodcast' element={<ListPodcast />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
         </Route>
