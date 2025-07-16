@@ -6,11 +6,18 @@ import {
   FiHeadphones,
   FiLayers,
   FiBarChart2,
+   FiChevronDown,
+  FiChevronRight,
+  FiFilePlus,
+  FiList,
+  FiFileText
 } from "react-icons/fi";
-
+import Breadcrumbs from "./Breadcrumbs";
 export default function SidebarLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const [showSubMenu, setShowSubMenu] = useState(false);
 
+  console.log(user);
   const handleLogout = () => {
     localStorage.removeItem("user");
     window.location.href = "/login";
@@ -19,7 +26,7 @@ export default function SidebarLayout() {
   const [showSidebar, setShowSidebar] = useState(false);
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `hover:bg-slate-600 p-2 rounded-md flex items-center gap-2 ${
+    `hover:bg-slate-600 text-white p-2 rounded-md flex items-center gap-2 ${
       isActive ? "bg-slate-700 font-semibold" : ""
     }`;
 
@@ -38,7 +45,7 @@ export default function SidebarLayout() {
 
         <div className="hidden md:flex items-center gap-4">
           <span>
-            Xin chào: <strong>{user.hoTen}</strong>
+            Xin chào: <strong>{user.ho_ten}</strong>
           </span>
           <button onClick={handleLogout} className="text-red-500">
             Đăng xuất
@@ -57,14 +64,40 @@ export default function SidebarLayout() {
             </NavLink>
 
             <NavLink
-              to="/admin/danh-sach-tai-lieu"
+              to="/admin/tailieu/Qltailieu"
               className={linkClass}
             >
               <FiBookOpen className="text-lg" /> Quản lý tài liệu
             </NavLink>
+<div>
+              <div
+                onClick={() => setShowSubMenu(!showSubMenu)}
+                className={`cursor-pointer p-2 rounded-md flex items-center justify-between gap-2 hover:bg-slate-600 transition-colors duration-200 ${
+                  showSubMenu ? "bg-slate-700 font-semibold" : ""
+                }`}
+              >
+                <span className="flex items-center gap-2 text-white">
+                  <FiBookOpen className="text-lg" /> Quản lý tài liệu
+                </span>
+                {showSubMenu ? <FiChevronDown /> : <FiChevronRight />}
+              </div>
 
+              {showSubMenu && (
+                <div className="ml-4 mt-2 flex flex-col gap-2">
+                  <NavLink to="/admin/tailieu/UploadDocument" className={linkClass}>
+                    <FiFilePlus className="text-base" /> Upload tài liệu
+                  </NavLink>
+                  <NavLink to="/admin/danh-sach-tai-lieu" className={linkClass}>
+                    <FiList className="text-base" /> Danh sách tài liệu
+                  </NavLink>
+                  <NavLink to="/admin/detail" className={linkClass}>
+                    <FiFileText className="text-base" /> Xem chi tiết tài liệu
+                  </NavLink>
+                </div>
+              )}
+            </div>
             <NavLink
-              to="/admin/danh-sach-podcast"
+              to="/admin/podcast/QlPodcast"
               className={linkClass}
             >
               <FiHeadphones className="text-lg" /> Quản lý Podcast
@@ -93,23 +126,7 @@ export default function SidebarLayout() {
         </aside>
 
         <main className="flex-1 p-2 mt-2 overflow-y-auto w-full">
-          <div className="text-sm breadcrumbs text-gray-600">
-            <ul className="flex space-x-2">
-              <li>
-                <a href="/" className="hover:underline">
-                  Trang chủ
-                </a>
-              </li>
-              <li>/</li>
-              <li>
-                <a href="/admin" className="hover:underline">
-                  Quản trị
-                </a>
-              </li>
-              <li>/</li>
-              <li className="text-blue-600 font-semibold">Thêm Podcast</li>
-            </ul>
-          </div>
+          <Breadcrumbs/>
 
           <Outlet />
         </main>
