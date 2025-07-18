@@ -6,38 +6,38 @@ import {
   FiHeadphones,
   FiLayers,
   FiBarChart2,
+   FiChevronDown,
+  FiChevronRight,
   FiFilePlus,
   FiList,
-  FiFileText,
-  FiChevronDown,
-  FiChevronRight,
+  // FiFileText
 } from "react-icons/fi";
-
+// import Breadcrumbs from "./Breadcrumbs";
 export default function SidebarLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-
+  const [showSubMenu, setShowSubMenu] = useState(false);
   const handleLogout = () => {
     localStorage.removeItem("user");
     window.location.href = "/login";
   };
+  console.log(user);
 
   const [showSidebar, setShowSidebar] = useState(false);
-  const [showSubMenu, setShowSubMenu] = useState(true);
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `hover:bg-slate-600 p-2 rounded-md flex items-center gap-2 text-white transition-colors duration-200 ${
+    `hover:bg-slate-600 text-white p-2 rounded-md flex items-center gap-2 ${
       isActive ? "bg-slate-700 font-semibold" : ""
     }`;
 
   return (
     <>
       {/* Header */}
-      <header className="bg-gray-900 w-full fixed top-0 left-0 z-40 text-white flex justify-between items-center px-4 h-14 shadow-md border-b border-gray-700">
+      <header className="bg-gray-900 w-full fixed top-0 left-0 z-40 text-white flex justify-between items-center px-4 h-14 shadow-md  border-b-[1px] border-gray-100">
         <div className="text-lg font-bold">Trang quản trị Podcast</div>
 
         <button
           onClick={() => setShowSidebar(!showSidebar)}
-          className="md:hidden block focus:outline-none text-xl"
+          className="md:hidden block focus:outline-none"
         >
           ☰
         </button>
@@ -46,7 +46,7 @@ export default function SidebarLayout() {
           <span>
             Xin chào: <strong>{user.ho_ten}</strong>
           </span>
-          <button onClick={handleLogout} className="text-red-500 hover:underline">
+          <button onClick={handleLogout} className="text-red-500">
             Đăng xuất
           </button>
         </div>
@@ -62,7 +62,7 @@ export default function SidebarLayout() {
               <FiHome className="inline m-0" /> Dashboard
             </NavLink>
 
-            {/* Quản lý tài liệu */}
+    
             <div>
               <div
                 onClick={() => setShowSubMenu(!showSubMenu)}
@@ -84,53 +84,43 @@ export default function SidebarLayout() {
                   <NavLink to="/admin/danh-sach-tai-lieu" className={linkClass}>
                     <FiList className="text-base" /> Danh sách tài liệu
                   </NavLink>
-                  <NavLink to="/admin/chi-tiet-tai-lieu" className={linkClass}>
+                  {/* <NavLink to="/admin/detail" className={linkClass}>
                     <FiFileText className="text-base" /> Xem chi tiết tài liệu
-                  </NavLink>
+                  </NavLink> */}
                 </div>
               )}
             </div>
-
-            {/* Các mục khác */}
-            <NavLink to="/admin/danh-sach-podcast" className={linkClass}>
+            <NavLink
+              to="/admin/podcast/QlPodcast"
+              className={linkClass}
+            >
               <FiHeadphones className="text-lg" /> Quản lý Podcast
             </NavLink>
 
-            <NavLink to="/admin/danh-sach-danh-muc" className={linkClass}>
+            <NavLink
+              to="/admin/category"
+              className={linkClass}
+            >
               <FiLayers className="text-lg" /> Quản lý danh mục
             </NavLink>
 
-            <NavLink to="/admin/analytics" className={linkClass}>
+            <NavLink
+              to="/admin/analytics"
+              className={linkClass}
+            >
               <FiBarChart2 className="text-lg" /> Analytics chi tiết
             </NavLink>
 
             <div className="md:hidden block mt-4">
-              <button onClick={handleLogout} className="text-red-400 hover:underline">
+              <button onClick={handleLogout} className="text-red-400">
                 Đăng xuất
               </button>
             </div>
           </nav>
         </aside>
 
-        {/* Main content */}
-        <main className="flex-1 p-4 mt-2 overflow-y-auto w-full bg-gray-50">
-          <div className="text-sm breadcrumbs text-gray-600">
-            <ul className="flex space-x-2">
-              <li>
-                <a href="/pages/home" className="hover:underline">
-                  Trang chủ
-                </a>
-              </li>
-              <li>/</li>
-              <li>
-                <a href="/admin" className="hover:underline">
-                  Quản trị
-                </a>
-              </li>
-              <li>/</li>
-              <li className="text-blue-600 font-semibold">Thêm Podcast</li>
-            </ul>
-          </div>
+        <main className="flex-1 p-2 mt-2 overflow-y-auto w-full">
+          {/* <Breadcrumbs/> */}
 
           <Outlet />
         </main>

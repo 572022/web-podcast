@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 
@@ -22,15 +22,21 @@ export default function AdminLogin() {
 
     try {
       setLoading(true)
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+
+      const baseURL = import.meta.env.VITE_API_URL
+      const response = await axios.post(`${baseURL}/api/auth/login`, {
         email,
         mat_khau: password,
       })
 
-      localStorage.setItem('token', res.data.token)
+      const { token, user } = response.data
+
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify(user))
+
       navigate('/admin/dashboard')
     } catch (err: any) {
-      const msg = err.response?.data?.error || 'Lỗi đăng nhập'
+      const msg = err.response?.data?.error || 'Lỗi đăng nhập, vui lòng thử lại'
       setError(msg)
     } finally {
       setLoading(false)
