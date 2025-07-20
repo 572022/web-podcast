@@ -16,6 +16,7 @@ import Breadcrumbs from "./Breadcrumbs";
 export default function SidebarLayout() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const [showSubMenu, setShowSubMenu] = useState(false);
+  const [showSubMenuPodcasts, setShowSubMenuPodcasts] = useState(false);
 
   console.log(user);
   const handleLogout = () => {
@@ -69,7 +70,7 @@ export default function SidebarLayout() {
             >
               <FiBookOpen className="text-lg" /> Quản lý tài liệu
             </NavLink>
-<div>
+          <div>
               <div
                 onClick={() => setShowSubMenu(!showSubMenu)}
                 className={`cursor-pointer p-2 rounded-md flex items-center justify-between gap-2 hover:bg-slate-600 transition-colors duration-200 ${
@@ -84,24 +85,42 @@ export default function SidebarLayout() {
 
               {showSubMenu && (
                 <div className="ml-4 mt-2 flex flex-col gap-2">
-                  <NavLink to="/admin/tailieu/UploadDocument" className={linkClass}>
-                    <FiFilePlus className="text-base" /> Upload tài liệu
-                  </NavLink>
-                  <NavLink to="/admin/danh-sach-tai-lieu" className={linkClass}>
+                  <NavLink to="/admin/tailieu/Qltailieu" className={linkClass}>
                     <FiList className="text-base" /> Danh sách tài liệu
                   </NavLink>
-                  <NavLink to="/admin/detail" className={linkClass}>
-                    <FiFileText className="text-base" /> Xem chi tiết tài liệu
+                  <NavLink to="/admin/tailieu/UploadDocument" className={linkClass}>
+                    <FiFilePlus className="text-base" /> Tải lên tài liệu
                   </NavLink>
+
                 </div>
               )}
-            </div>
-            <NavLink
-              to="/admin/podcast/QlPodcast"
-              className={linkClass}
-            >
-              <FiHeadphones className="text-lg" /> Quản lý Podcast
-            </NavLink>
+          </div>
+          {/* quản lý postcast */}
+            <div>
+              <div
+                onClick={() => setShowSubMenuPodcasts(!showSubMenuPodcasts)}
+                className={`cursor-pointer p-2 rounded-md flex items-center justify-between gap-2 hover:bg-slate-600 transition-colors duration-200 ${
+                  showSubMenuPodcasts ? "bg-slate-700 font-semibold" : ""
+                }`}
+              >
+                <span className="flex items-center gap-2 text-white">
+                  <FiBookOpen className="text-lg" /> Quản lý Podcast
+                </span>
+                {showSubMenuPodcasts ? <FiChevronDown /> : <FiChevronRight />}
+              </div>
+
+              {showSubMenuPodcasts && (
+                <div className="ml-4 mt-2 flex flex-col gap-2 text-sm">
+                  <NavLink to="/admin/podcast/QlPodcast" className={linkClass}>
+                    <FiList className="text-base" /> Danh sách Podcast
+                  </NavLink>
+                  <NavLink to="/admin/podcast/Tailenpodcast" className={linkClass}>
+                    <FiFilePlus className="text-base" /> Tải lên podcast
+                  </NavLink>
+
+                </div>
+              )}
+          </div>
 
             <NavLink
               to="/admin/danh-sach-danh-muc"

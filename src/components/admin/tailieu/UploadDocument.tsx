@@ -1,14 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const API = import.meta.env.VITE_API_URL;
-
-interface UploadedFile {
-  ID: string;
-  TenFileGoc: string;
-  DuongDanFile: string;
-  LoaiFile: string;
-}
 
 export default function UploadDocument() {
   const [file, setFile] = useState<File | null>(null);
@@ -16,15 +10,11 @@ export default function UploadDocument() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-  const [search, setSearch] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
       setError("");
-      setSuccess(false);
     }
   };
 
@@ -33,7 +23,6 @@ export default function UploadDocument() {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFile(e.dataTransfer.files[0]);
       setError("");
-      setSuccess(false);
     }
   };
 
@@ -53,7 +42,6 @@ export default function UploadDocument() {
       setUploading(true);
       setProgress(0);
       setError("");
-      setSuccess(false);
 
       const token = localStorage.getItem("token");
 
@@ -63,51 +51,26 @@ export default function UploadDocument() {
           Authorization: `Bearer ${token}`,
         },
         onUploadProgress: (progressEvent) => {
-          const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+          const percent = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 1)
+          );
           setProgress(percent);
         },
       });
 
-      setSuccess(true);
+      // ✅ Thông báo toast
+      toast.success("Tải lên thành công. Bạn có thể theo dõi tiến trình ở Quản lý Tài liệu");
+
+      // Reset form
       setFile(null);
-      fetchUploadedFiles();
+      setFileType("");
+      setProgress(0);
     } catch (err: any) {
       setError(err.response?.data?.error || "Lỗi khi tải lên tài liệu.");
     } finally {
       setUploading(false);
     }
   };
-
-  const fetchUploadedFiles = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API}/api/admin/documents`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setUploadedFiles(res.data);
-    } catch (err) {
-      console.error("Lỗi khi lấy danh sách tài liệu đã tải:", err);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${API}/api/admin/documents/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      fetchUploadedFiles();
-    } catch (err) {
-      console.error("Lỗi khi xóa tài liệu:", err);
-    }
-  };
-  useEffect(() => {
-    fetchUploadedFiles();
-  }, []);
 
   return (
     <div className="max-w-4xl mx-auto mt-8 bg-white p-6 rounded-xl shadow-md">
@@ -144,7 +107,10 @@ export default function UploadDocument() {
           className="hidden"
           id="fileInput"
         />
-        <label htmlFor="fileInput" className="block mt-2 text-blue-600 underline cursor-pointer">
+        <label
+          htmlFor="fileInput"
+          className="block mt-2 text-blue-600 underline cursor-pointer"
+        >
           Chọn tệp từ máy tính
         </label>
       </div>
@@ -162,7 +128,6 @@ export default function UploadDocument() {
       )}
 
       {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
-      {success && <p className="text-green-600 mt-2 text-sm">Tải lên thành công!</p>}
 
       <button
         onClick={handleUpload}
@@ -171,62 +136,6 @@ export default function UploadDocument() {
       >
         {uploading ? "Đang tải lên..." : "Tải lên tài liệu"}
       </button>
-
-      <hr className="my-6" />
-
-      <h3 className="text-xl font-semibold mb-2">Danh sách tài liệu đã tải lên</h3>
-
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Tìm kiếm theo tên tệp..."
-        className="mb-4 w-full px-3 py-2 border border-gray-300 rounded"
-      />
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead className="bg-gray-100 text-left">
-            <tr>
-              <th className="p-2 border">Tên tệp</th>
-              <th className="p-2 border">Loại</th>
-              <th className="p-2 border">Link</th>
-              <th className="p-2 border">Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(uploadedFiles) &&
-              uploadedFiles
-                .filter((f) =>
-                  f.TenFileGoc.toLowerCase().includes(search.toLowerCase())
-                )
-                .map((f) => (
-                  <tr key={f.ID} className="hover:bg-gray-50">
-                    <td className="p-2 border">{f.TenFileGoc}</td>
-                    <td className="p-2 border">{f.LoaiFile}</td>
-                    <td className="p-2 border">
-                      <a
-                        href={f.DuongDanFile}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        Xem
-                      </a>
-                    </td>
-                    <td className="p-2 border">
-                      <button
-                        onClick={() => handleDelete(f.ID)}
-                        className="text-red-500 hover:underline"
-                      >
-                        Xóa
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }

@@ -12,7 +12,8 @@ export default function Breadcrumbs() {
     'tailentailieu': 'Tải lên tài liệu',
     'uploaddocument': 'Tải lên tài liệu',
     'qlpodcast': 'Quản lý podcast',
-    'thempodcast': 'Thêm podcast'
+    'thempodcast': 'Thêm podcast',
+    'UploadPodcast':'Tải lên podcast'
   };
 
   return (

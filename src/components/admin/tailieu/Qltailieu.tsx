@@ -1,114 +1,156 @@
-import React from 'react'
-import {useState} from 'react'
-import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { format } from "date-fns";
+import { toast } from "react-toastify";
+
+const API = import.meta.env.VITE_API_URL;
+
+interface TaiLieu {
+  id: string;
+  ten_file_goc: string;
+  trang_thai: string;
+  ngay_tai_len: string;
+}
 
 export default function Qltailieu() {
-  const cellclass = "border px-4 py-2 text-sm text-gray-700";
-  const [currentPage, setCurrentPage]= useState(1);
- const [selectedStatus, setSelectedStatus] = useState('');
+  const [documents, setDocuments] = useState<TaiLieu[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 5;
 
-  const PAGE_SIZE = 10;
-  const data = Array.from({ length: 50 }, (_, i) => ({
-  id: i + 1,
-  name: `Tài liệu ${i + 1}`,
-  creator: `Người ${i + 1}`,
-  date: `2025-07-${(i % 30) + 1}`,
-  status: i % 3 === 0 ? 'Đang làm' : i % 3 === 1 ? 'Commited' : 'Done',
-}));
-  const totalPages= Math.ceil( PAGE_SIZE);
-const filteredData = data.filter(item =>
-  selectedStatus === "" || item.status === selectedStatus
-)
+  const fetchDocuments = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/api/admin/documents`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          page,
+          limit,
+          search,
+        },
+      });
+      setDocuments(res.data.data || []);
+      setTotalPages(res.data.pagination?.total_pages || 1);
+    } catch (err) {
+      toast.error("Lỗi khi tải danh sách tài liệu");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDocuments();
+  }, [page, search]);
+
+  const renderStatus = (status: string) => {
+    switch (status) {
+      case "Hoàn thành":
+        return (
+          <span className="text-green-600 font-medium">
+            ✅ {status} <span className="text-xs">(Đã tạo podcast)</span>
+          </span>
+        );
+      case "Lỗi":
+        return <span className="text-red-500 font-medium"> {status}</span>;
+      case "Đã trích xuất":
+        return <span className="text-blue-500 font-medium"> {status}</span>;
+      case "Đã tải lên":
+        return <span className="text-yellow-500 font-medium"> {status}</span>;
+      default:
+        return <span className="text-gray-500 font-medium">{status}</span>;
+    }
+  };
+
+  const filteredDocuments = documents.filter(
+    (doc) => !statusFilter || doc.trang_thai === statusFilter
+  );
+
   return (
-  <div className="p-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-      <form className="w-full sm:w-[70%]">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center ps-3 pointer-events-none">
-            <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 20 20">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-            </svg>
-          </div>
-          <input
-            type="search"
-            className="w-full ps-9 pe-24 p-3 border border-gray-300 rounded-lg bg-gray-10 text-sm"
-            placeholder="Tìm kiếm tài liệu"
-            required
-          />
+    <div className="max-w-6xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-blue-600">Quản lý tài liệu</h2>
+
+      <div className="mb-4 flex flex-col md:flex-row md:items-center gap-4">
+        <input
+          type="text"
+          placeholder="Tìm kiếm theo tên file..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          className="border border-gray-300 px-4 py-2 rounded w-full md:w-1/2"
+        />
+
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="border border-gray-300 px-3 py-2 rounded w-full md:w-1/3"
+        >
+          <option value="">Tất cả trạng thái</option>
+          <option value="Đã tải lên">Đã tải lên</option>
+          <option value="Đã trích xuất">Đã trích xuất</option>
+          <option value="Hoàn thành">Hoàn thành</option>
+          <option value="Lỗi">Lỗi</option>
+        </select>
+      </div>
+
+      {loading ? (
+        <p className="text-gray-600">Đang tải danh sách...</p>
+      ) : filteredDocuments.length === 0 ? (
+        <p className="text-gray-500">Không có tài liệu nào phù hợp.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border border-gray-200">
+            <thead>
+              <tr className="bg-gray-100 text-left">
+                <th className="px-4 py-2">Tên file</th>
+                <th className="px-4 py-2">Ngày tải lên</th>
+                <th className="px-4 py-2">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredDocuments.map((doc) => (
+                <tr key={doc.id} className="border-t">
+                  <td className="px-4 py-2">{doc.ten_file_goc}</td>
+                  <td className="px-4 py-2">
+                    {format(new Date(doc.ngay_tai_len), "dd/MM/yyyy HH:mm")}
+                  </td>
+                  <td className="px-4 py-2">{renderStatus(doc.trang_thai)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center items-center space-x-4">
           <button
-            type="submit"
-            className="absolute right-2 bottom-1.5 bg-blue-600 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-600"
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            className="px-3 py-1 border rounded bg-gray-100"
+            disabled={page === 1}
           >
-            Tìm
+            Trang trước
+          </button>
+          <span>
+            Trang {page} / {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+            className="px-3 py-1 border rounded bg-gray-100"
+            disabled={page === totalPages}
+          >
+            Trang sau
           </button>
         </div>
-      </form>
-
-      <select
-        value={selectedStatus}
-        onChange={(e) => setSelectedStatus(e.target.value)}
-        className="border px-3 py-3 rounded text-sm w-[30%]"
-      >
-        <option value="">Tất cả trạng thái</option>
-        <option value="Đang làm">Đang làm</option>
-        <option value="Commited">Commited</option>
-        <option value="Done">Done</option>
-        <option value="Trễ">Trễ</option>
-      </select>
+      )}
     </div>
-
-    <div className="overflow-x-auto mt-4 rounded-md shadow">
-      <NavLink to="/admin/tailieu/Tailentailieu" className=''>
-        Tải lên tài liệu
-
-      </NavLink>
-      <table className="min-w-full border text-sm text-gray-700 bg-white ">
-        <thead className="bg-[#435d7d] text-white text-center p-1">
-          <tr>
-            <th className="border px-4 py-2 text-start">Tên tài liệu</th>
-            <th className="border px-4 py-2 text-start">Người tạo</th>
-            <th className="border px-4 py-2 text-start">Ngày tạo</th>
-            <th className="border px-4 py-2 text-start">Trạng thái</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="border px-4 py-2">X</td>
-            <td className="border px-4 py-2">X</td>
-            <td className="border px-4 py-2">X</td>
-            <td className="border px-4 py-2">Y</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2">X</td>
-            <td className="border px-4 py-2">X</td>
-            <td className="border px-4 py-2">X</td>
-            <td className="border px-4 py-2">Y</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    {/* pagination tài liệu */}
-    <div className="flex justify-between items-center mt-4 max-w-md mx-auto">
-      <button
-        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-        disabled={currentPage === 1}
-        className="px-3 py-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
-      >
-        ← Trước
-      </button>
-      <span className="text-sm">
-        Trang <strong>{currentPage}</strong> / {totalPages}
-      </span>
-      <button
-        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-        disabled={currentPage === totalPages}
-        className="px-3 py-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
-      >
-        Sau →
-      </button>
-    </div>
-  </div>
-)
-
+  );
 }

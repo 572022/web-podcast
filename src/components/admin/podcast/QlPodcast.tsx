@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-
+import { NavLink } from "react-router-dom";
 // Dữ liệu giả lập
 const podcasts = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
@@ -53,7 +53,9 @@ export default function PodcastTable() {
           <option value="Đã ẩn">Đã ẩn</option>
         </select>
       </div>
-
+        <NavLink to="/admin/podcast/UploadPodcast" className=''>
+        Tải lên Podcast
+      </NavLink>
       {/* Bảng */}
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="w-full text-sm text-gray-700">
