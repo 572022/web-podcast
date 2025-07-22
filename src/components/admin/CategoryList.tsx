@@ -90,7 +90,6 @@ const CategoryList: React.FC = () => {
       message.error("Lỗi khi lưu danh mục.");
     }
   };
-
   // const handleDelete = async (id: string) => {
   //   try {
   //     await axiosInstance.put(`/${id}/status`, { kich_hoat: false });
