@@ -24,7 +24,7 @@ export default function Qltailieu() {
   const fetchDocuments = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token")?.replace("Bearer ", "");
       const res = await axios.get(`${API}/api/admin/documents`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -48,20 +48,71 @@ export default function Qltailieu() {
     fetchDocuments();
   }, [page, search]);
 
+useEffect(() => {
+  const token = localStorage.getItem("token")?.replace("Bearer ", "");
+  console.log("🧪 WebSocket token:", token);
+  if (!token) return;
+
+  const ws = new WebSocket(
+    `wss://podcastserver-production.up.railway.app/ws/status?token=${token}`
+  );
+
+  ws.onopen = () => {
+    console.log("✅ WebSocket connected to status");
+  };
+
+  ws.onmessage = (event) => {
+    console.log("📩 Dữ liệu WebSocket:", event.data);
+
+    try {
+      const data = JSON.parse(event.data);
+
+      // Nếu chỉ là thông báo danh sách thay đổi → gọi lại API
+      if (data.type === "document_list_changed") {
+        console.log("📥 Danh sách tài liệu thay đổi, đang tải lại...");
+        fetchDocuments(); // Gọi lại API để đồng bộ danh sách
+      }
+
+      // (Tùy chọn) Nếu sau này server gửi kiểu { id, trang_thai }, bạn có thể xử lý thêm ở đây
+      // else if (data.id && data.trang_thai) { ... }
+
+    } catch (err) {
+      console.warn("⚠️ Không phải JSON hợp lệ:", event.data);
+    }
+  };
+
+  ws.onerror = (err) => {
+    console.error("❌ WebSocket error:", err);
+  };
+
+  ws.onclose = () => {
+    console.log("🔌 WebSocket disconnected");
+  };
+
+  return () => ws.close();
+}, []);
+
+
+
   const renderStatus = (status: string) => {
     switch (status) {
       case "Hoàn thành":
         return (
           <span className="text-green-600 font-medium">
-            ✅ {status} <span className="text-xs">(Đã tạo podcast)</span>
+            {status} <span className="text-xs">(Đã tạo podcast)</span>
           </span>
         );
       case "Lỗi":
+      case "Lỗi khi tạo audio":
         return <span className="text-red-500 font-medium"> {status}</span>;
       case "Đã trích xuất":
         return <span className="text-blue-500 font-medium"> {status}</span>;
       case "Đã tải lên":
         return <span className="text-yellow-500 font-medium"> {status}</span>;
+      case "Đang tạo audio...":
+        return <span className="text-purple-500 font-medium">{status}</span>;
+      case "Đang tải lên tài liệu...":
+        return <span className="text-orange-500 font-medium"> {status}</span>;
       default:
         return <span className="text-gray-500 font-medium">{status}</span>;
     }
@@ -97,6 +148,8 @@ export default function Qltailieu() {
           <option value="Đã trích xuất">Đã trích xuất</option>
           <option value="Hoàn thành">Hoàn thành</option>
           <option value="Lỗi">Lỗi</option>
+          <option value="Đang tạo audio...">Đang tạo audio...</option>
+          <option value="Đang tải lên tài liệu...">Đang tải lên tài liệu...</option>
         </select>
       </div>
 
@@ -116,7 +169,7 @@ export default function Qltailieu() {
             </thead>
             <tbody>
               {filteredDocuments.map((doc) => (
-                <tr key={doc.id} className="border-t">
+                <tr key={doc.id} className="border-t hover:bg-gray-50">
                   <td className="px-4 py-2">{doc.ten_file_goc}</td>
                   <td className="px-4 py-2">
                     {format(new Date(doc.ngay_tai_len), "dd/MM/yyyy HH:mm")}

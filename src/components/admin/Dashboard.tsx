@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import {  useEffect ,useState } from 'react'
 import axios from 'axios'
 
 export default function Dashboard() {
-  const [activities, setActivities] = useState([])
+  const [activities , setActivities ] = useState([])
 
   useEffect(() => {
     const fetchActivities = async () => {

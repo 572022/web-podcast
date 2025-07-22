@@ -13,6 +13,12 @@ import QlPodcast from './components/admin/podcast/QlPodcast';
 import UploadPodcast from './components/admin/podcast/UploadPodcast';
 import Breadcrumbs from './components/admin/Breadcrumbs';
 import { useImperativeHandle } from 'react';
+import EditPodcastForm from './components/admin/podcast/EditPodcastForm';
+import DetailDocument from './components/admin/DetailDocument'
+import CategoryList from './components/admin/CategoryList'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -30,10 +36,19 @@ export default function App() {
 
           <Route path="/admin/podcast/QlPodcast" element={<QlPodcast />} />
           <Route path='/admin/podcast/UploadPodcast' element={<UploadPodcast/>} />
+          {/* <Route path='/admin/podcast/EditPodcastForm' element={<EditPodcastForm/>} /> */}
+
           <Route path='/admin/Breadcrumbs' element={<Breadcrumbs />} />
+        <Route index element={<Dashboard />} />
+        <Route path='upload' element={<UploadDocument />} />
+        <Route path='detail/:id' element={<DetailDocument />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="category" element={<CategoryList />} />
 
         </Route>
       </Routes>
+      <ToastContainer />
+
     </BrowserRouter>
   );
 }
