@@ -10,10 +10,11 @@ export default function Breadcrumbs() {
     'tailieu': 'Quản lý tài liệu',
     'qltailieu': 'Danh sách tài liệu',
     'tailentailieu': 'Tải lên tài liệu',
-    'uploaddocument': 'Tải lên tài liệu',
     'qlpodcast': 'Quản lý podcast',
     'thempodcast': 'Thêm podcast',
-    'UploadPodcast':'Tải lên podcast'
+    'UploadPodcast':'Tải lên podcast',
+    'podcast':'Quản lý podcast'
+
   };
 
   return (
