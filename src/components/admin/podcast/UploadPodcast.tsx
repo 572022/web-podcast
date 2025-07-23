@@ -68,7 +68,7 @@ return (
     onSubmit={handleSubmit}
     className="max-w-3xl mx-auto p-6 bg-white border rounded-2xl shadow-md space-y-6"
   >
-    <h1 className="text-2xl font-bold text-gray-800">Tải lên Podcast mới</h1>
+    <h1 className="text-2xl font-bold text-blue-800 text-center">Tải lên Podcast mới</h1>
 
     {/* Tiêu đề */}
     <div>
@@ -96,19 +96,22 @@ return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
-        <select
-          value={danhMucId}
-          onChange={(e) => setDanhMucId(e.target.value)}
-          className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        >
-          <option value="">-- Chọn danh mục --</option>
-          {categories.map((cat: any) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.ten_danh_muc}
-            </option>
-          ))}
-        </select>
+          
+          <select
+            value={danhMucId}
+            onChange={(e) => setDanhMucId(e.target.value)
+            }
+
+            className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          >
+            <option value="">-- Chọn danh mục --</option>
+            {categories.map((cat: any) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.ten_danh_muc}
+              </option>
+            ))}
+          </select>
       </div>
 
       <div>
@@ -172,7 +175,7 @@ return (
     <div className="pt-4">
       <button
         type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition"
+        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition w-full"
       >
         Tải lên
       </button>

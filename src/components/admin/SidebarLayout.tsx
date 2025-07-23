@@ -21,7 +21,7 @@ export default function SidebarLayout() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
   console.log(user);
 
@@ -66,32 +66,10 @@ export default function SidebarLayout() {
         <NavLink to="/admin/dashboard" className={linkClass}>
           <FiHome className="inline m-0" /> Dashboard
         </NavLink>
+        <NavLink to="/admin/tailieu/Qltailieu" className={linkClass}>
+          <FiList className="text-base" />  Quản lý tài liệu
+        </NavLink>
 
-        {/* Quản lý tài liệu (collapse menu) */}
-        <div>
-          <div
-            onClick={() => setShowSubMenu(!showSubMenu)}
-            className={`cursor-pointer p-2 rounded-md flex items-center justify-between gap-2 hover:bg-slate-600 transition-colors duration-200 ${
-              showSubMenu ? "bg-slate-700 font-semibold" : ""
-            }`}
-          >
-            <span className="flex items-center gap-2 text-white">
-              <FiBookOpen className="text-lg" /> Quản lý tài liệu
-            </span>
-            {showSubMenu ? <FiChevronDown /> : <FiChevronRight />}
-          </div>
-
-          {showSubMenu && (
-            <div className="ml-4 mt-2 flex flex-col gap-2">
-              <NavLink to="/admin/tailieu/Qltailieu" className={linkClass}>
-                <FiList className="text-base" /> Danh sách tài liệu
-              </NavLink>
-              {/* <NavLink to="/admin/tailieu/UploadDocument" className={linkClass}>
-                <FiFilePlus className="text-base" /> Tải lên tài liệu
-              </NavLink> */}
-            </div>
-          )}
-        </div>
 
         {/* Quản lý podcast (collapse menu) */}
         <div>
