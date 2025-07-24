@@ -33,73 +33,75 @@ const PodcastDetailModal: React.FC<Props> = ({ show, onClose, podcast, formatDur
   if (!show || !podcast) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 !mt-0">
-      <div className="bg-white rounded-lg shadow-md max-w-md relative p-6 max-h-[90vh] overflow-y-auto w-full">
-        <button
-          onClick={onClose}
-          title="Đóng"
-          className="absolute top-4 right-4 text-4xl text-black 
-                hover:text-red-500 hover:scale-110
-                transition-transform duration-200 ease-in-out
-                bg-transparent border-none p-0 cursor-pointer focus:outline-none"
-        >
-          &times;
-        </button>
+   <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 !mt-0">
+  <div className="bg-white rounded-xl shadow-2xl max-w-2xl relative p-5 max-h-[90vh] overflow-y-auto w-[90vh] ">
+    <button 
+      onClick={onClose}
+      title="Đóng"
+      className="absolute top-5 right-5 text-4xl text-gray-600 
+            hover:text-red-500 hover:scale-110
+            transition-transform duration-200 ease-in-out
+            bg-transparent border-none p-0 cursor-pointer focus:outline-none"
+    >
+      &times;
+    </button>
+<div className="text-center mb-3 pb-1  ">
+  <h2 className="text-3xl font-bold text-[#31434f] tracking-wide inline-block border-b-2 border-[#31434f]">
+    {podcast.tieu_de}
+  </h2>
+</div>
+    <img
+      src={podcast.hinh_anh_dai_dien || '/placeholder.jpg'}
+      alt="Ảnh đại diện"
+      className="w-full h-56 object-cover rounded-lg mb-4 border border-gray-200"
+    />
 
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-700 tracking-wide">
-          {podcast.tieu_de}
-        </h2>
-
-        <img
-          src={podcast.hinh_anh_dai_dien || '/placeholder.jpg'}
-          alt="Ảnh đại diện"
-          className="w-full h-48 object-cover rounded-md mb-3"
-        />
-
-        <div className="space-y-2 text-sm text-gray-700 mb-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border-b py-2">
-            <div className='text-center'>
-              <p className="text-gray-600 font-medium">Thời lượng:</p>
-              <p>{formatDuration(podcast.thoi_luong_giay)}</p>
-            </div>
-            <div className='text-center'>
-              <p className="text-gray-600 font-medium">Trạng thái:</p>
-              <p className={podcast.trang_thai === 'active' ? 'text-green-600' : 'text-amber-600'}>
-                {podcast.trang_thai}
-              </p>
-            </div>
-            <div className='text-center'>
-              <p className="text-gray-600 font-medium">Lượt xem:</p>
-              <p>{podcast.luot_xem}</p>
-            </div>
-          </div>
-
-          <div className="pt-2">
-            <div className="flex flex-wrap gap-1 mt-1">
-              <span className="font-medium text-gray-600">Tags:</span>
-              {podcast.the_tag?.split(',').map((tag, index) => (
-                <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded">
-                  {tag.trim()}
-                </span>
-              ))}
-            </div>
-          </div>
+    <div className="space-y-3 text-sm text-gray-700 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-b border-gray-200 pb-4">
+        <div className='text-center'>
+          <p className="text-gray-600 font-medium">Thời lượng:</p>
+          <p className="text-gray-800 font-semibold">{formatDuration(podcast.thoi_luong_giay)}</p>
         </div>
-
-        <div className="mb-4">
-          <span className="font-medium text-gray-600 mb-1">Mô tả: </span>
-          {podcast.mo_ta || 'Không có mô tả'}
+        <div className='text-center'>
+          <p className="text-gray-600 font-medium">Trạng thái:</p>
+          <p className={`font-semibold ${podcast.trang_thai === 'active' ? 'text-green-600' : 'text-amber-600'}`}>
+            {podcast.trang_thai}
+          </p>
         </div>
+        <div className='text-center'>
+          <p className="text-gray-600 font-medium">Lượt xem:</p>
+          <p className="text-gray-800 font-semibold">{podcast.luot_xem}</p>
+        </div>
+      </div>
 
-        {podcast.duong_dan_audio && (
-          <audio
-            className="w-full mt-3 rounded"
-            controls
-            src={podcast.duong_dan_audio}
-          />
-        )}
+      <div className="pt-2 pl-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-medium text-gray-600">Tags:</span>
+          {podcast.the_tag?.split(',').map((tag, index) => (
+            <span key={index} className="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full">
+              {tag.trim()}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
+
+    <div className="mb-2 pl-4">
+      <span className="font-medium text-gray-600 mb-2">Mô tả: </span>
+      <span className="text-gray-700">
+       {podcast.mo_ta || 'Không có mô tả'}
+      </span>
+    </div>
+
+    {podcast.duong_dan_audio && (
+      <audio
+        className="w-full mt-4 rounded-lg"
+        controls
+        src={podcast.duong_dan_audio}
+      />
+    )}
+  </div>
+</div>
   );
 };
 

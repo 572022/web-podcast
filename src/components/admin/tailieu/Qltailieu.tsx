@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
@@ -18,25 +18,17 @@ export default function Qltailieu() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const limit = 5;
+  const [limit] = useState(5);
 
   const fetchDocuments = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token")?.replace("Bearer ", "");
       const res = await axios.get(`${API}/api/admin/documents`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          page,
-          limit,
-          search,
-        },
+        headers: { Authorization: `Bearer ${token}` },
+        params: { page: 1, limit: 1000 }, // Lấy tất cả dữ liệu
       });
       setDocuments(res.data.data || []);
-      setTotalPages(res.data.pagination?.total_pages || 1);
     } catch (err) {
       toast.error("Lỗi khi tải danh sách tài liệu");
     } finally {
@@ -46,53 +38,50 @@ export default function Qltailieu() {
 
   useEffect(() => {
     fetchDocuments();
-  }, [page, search]);
+  }, []);
 
-useEffect(() => {
-  const token = localStorage.getItem("token")?.replace("Bearer ", "");
-  console.log("🧪 WebSocket token:", token);
-  if (!token) return;
+  useEffect(() => {
+    const token = localStorage.getItem("token")?.replace("Bearer ", "");
+    if (!token) return;
 
-  const ws = new WebSocket(
-    `wss://podcastserver-production.up.railway.app/ws/status?token=${token}`
-  );
+    const ws = new WebSocket(
+      `wss://podcastserver-production.up.railway.app/ws/status?token=${token}`
+    );
 
-  ws.onopen = () => {
-    console.log("✅ WebSocket connected to status");
-  };
-
-  ws.onmessage = (event) => {
-    console.log("📩 Dữ liệu WebSocket:", event.data);
-
-    try {
-      const data = JSON.parse(event.data);
-
-      // Nếu chỉ là thông báo danh sách thay đổi → gọi lại API
-      if (data.type === "document_list_changed") {
-        console.log("📥 Danh sách tài liệu thay đổi, đang tải lại...");
-        fetchDocuments(); // Gọi lại API để đồng bộ danh sách
+    ws.onopen = () => console.log("WebSocket connected");
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "document_list_changed") {
+          console.log("Dữ liệu thay đổi, làm mới...");
+          fetchDocuments();
+        }
+      } catch (err) {
+        console.warn("Không phải JSON:", event.data);
       }
+    };
 
-      // (Tùy chọn) Nếu sau này server gửi kiểu { id, trang_thai }, bạn có thể xử lý thêm ở đây
-      // else if (data.id && data.trang_thai) { ... }
+    ws.onerror = (err) => console.error("WebSocket error:", err);
+    ws.onclose = () => console.log("WebSocket disconnected");
+    return () => ws.close();
+  }, []);
 
-    } catch (err) {
-      console.warn("⚠️ Không phải JSON hợp lệ:", event.data);
-    }
-  };
+  const filteredDocuments = useMemo(() => {
+    return documents.filter((doc) => {
+      const matchesSearch = doc.ten_file_goc
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      const matchesStatus =
+        !statusFilter || doc.trang_thai === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [documents, search, statusFilter]);
 
-  ws.onerror = (err) => {
-    console.error("❌ WebSocket error:", err);
-  };
-
-  ws.onclose = () => {
-    console.log("🔌 WebSocket disconnected");
-  };
-
-  return () => ws.close();
-}, []);
-
-
+  const totalPages = Math.ceil(filteredDocuments.length / limit);
+  const paginatedDocuments = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredDocuments.slice(start, start + limit);
+  }, [filteredDocuments, page, limit]);
 
   const renderStatus = (status: string) => {
     switch (status) {
@@ -118,10 +107,6 @@ useEffect(() => {
     }
   };
 
-  const filteredDocuments = documents.filter(
-    (doc) => !statusFilter || doc.trang_thai === statusFilter
-  );
-
   return (
     <div className="max-w-6xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-blue-600">Quản lý tài liệu</h2>
@@ -140,7 +125,10 @@ useEffect(() => {
 
         <select
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setPage(1);
+          }}
           className="border border-gray-300 px-3 py-2 rounded w-full md:w-1/3"
         >
           <option value="">Tất cả trạng thái</option>
@@ -155,7 +143,7 @@ useEffect(() => {
 
       {loading ? (
         <p className="text-gray-600">Đang tải danh sách...</p>
-      ) : filteredDocuments.length === 0 ? (
+      ) : paginatedDocuments.length === 0 ? (
         <p className="text-gray-500">Không có tài liệu nào phù hợp.</p>
       ) : (
         <div className="overflow-x-auto">
@@ -168,7 +156,7 @@ useEffect(() => {
               </tr>
             </thead>
             <tbody>
-              {filteredDocuments.map((doc) => (
+              {paginatedDocuments.map((doc) => (
                 <tr key={doc.id} className="border-t hover:bg-gray-50">
                   <td className="px-4 py-2">{doc.ten_file_goc}</td>
                   <td className="px-4 py-2">

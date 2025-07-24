@@ -107,7 +107,7 @@ export default function UploadPodcast() {
       onSubmit={handleSubmit}
       className="max-w-3xl mx-auto p-6 bg-white border rounded-2xl shadow-md space-y-6"
     >
-      <h1 className="text-2xl font-bold text-blue-800 text-center">Tải lên Podcast mới</h1>
+      <h1 className="text-2xl font-bold text-blue-800 text-center">Tải lên Podcast </h1>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Tiêu đề</label>
@@ -175,16 +175,19 @@ export default function UploadPodcast() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Tệp văn bản (.txt)</label>
-        <input
-          type="file"
-          accept=".txt"
-          ref={fileTextRef}
-          onChange={(e) => setTextFile(e.target.files?.[0] || null)}
-          className="w-full border px-3 py-2 rounded-lg"
-          required
-        />
-      </div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Tệp văn bản (.txt, .pdf, .docx, .doc)
+  </label>
+  <input
+    type="file"
+    accept=".txt, .pdf, .docx, .doc"
+    ref={fileTextRef}
+    onChange={(e) => setTextFile(e.target.files?.[0] || null)}
+    className="w-full border px-3 py-2 rounded-lg"
+    required
+  />
+</div>
+
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Ảnh đại diện</label>

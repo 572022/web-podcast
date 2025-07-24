@@ -194,24 +194,40 @@ export default function QlPodcast() {
       />
 
       {editId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4 overflow-auto !mt-0">
-          <div className="bg-white p-4 md:p-6 rounded-xl w-full max-w-xl relative max-h-[90vh] overflow-y-auto">
+<div className="fixed inset-0 bg-black/50  flex justify-center items-center z-50 p-4 overflow-auto !mt-0">
+  <div className="bg-[#ededef] p-6 rounded-xl w-full max-w-xl relative max-h-[90vh] overflow-y-auto shadow-xl
+        ">
+    
             <button
-              onClick={() => setEditId(null)}
-              className="absolute top-4 right-7 text-4xl text-black hover:text-red-500 hover:scale-110 transition-transform duration-200 ease-in-out"
-            >
-              &times;
-            </button>
-            <h2 className="text-2xl font-bold mb-4 text-center text-gray-700 tracking-wide">Chỉnh sửa Podcast</h2>
-            <EditPodcastForm
-              id={editId}
-              onSuccess={() => {
-                setEditId(null);
-                fetchData();
-              }}
-            />
-          </div>
-        </div>
+           onClick={() => setEditId(null)}
+          title="Đóng"
+          className="absolute top-4 right-4 text-4xl text-black 
+                hover:text-red-500 hover:scale-110
+                transition-transform duration-200 ease-in-out
+                bg-transparent border-none p-0 cursor-pointer focus:outline-none"
+        >
+          &times;
+        </button>
+<div className="text-center mb-6">
+  <h2 className="text-2xl font-bold tracking-tight 
+        bg-gradient-to-r from-gray-900 to-gray-800 bg-clip-text text-transparent">
+    Chỉnh sửa Podcast
+  </h2>
+  <div className="w-[200px] h-[2px] bg-gray-500/80 rounded-full mx-auto mt-3"></div>
+</div>
+
+    {/* Form Content */}
+    <div className="space-y-4">
+      <EditPodcastForm
+        id={editId}
+        onSuccess={() => {
+          setEditId(null);
+          fetchData();
+        }}
+      />
+    </div>
+  </div>
+</div>
       )}
 
       <div className="flex justify-center items-center gap-4 pt-6 text-sm">

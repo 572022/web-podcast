@@ -100,7 +100,7 @@ export default function EditPodcastForm({ id, onSuccess }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-2xl mx-auto p-4 bg-white rounded-2xl shadow-lg space-y-6 border border-[#7f8e9544]"
+      className="max-w-2xl mx-auto p-4 bg-[#fff] rounded-2xl shadow-lg space-y-6 border border-[#9aaeb765]"
     >
       <div className="space-y-6">
         <div>
@@ -111,7 +111,7 @@ export default function EditPodcastForm({ id, onSuccess }: Props) {
             value={form.tieu_de}
             onChange={handleChange}
             required
-            className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all"
+            className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent bg-gray-50 hover:bg-white transition-all"
           />
         </div>
 
@@ -122,7 +122,7 @@ export default function EditPodcastForm({ id, onSuccess }: Props) {
             value={form.mo_ta}
             onChange={handleChange}
             rows={4}
-            className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all"
+            className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent bg-gray-50 hover:bg-white transition-all"
           />
         </div>
 
@@ -133,7 +133,7 @@ export default function EditPodcastForm({ id, onSuccess }: Props) {
             name="the_tag"
             value={form.the_tag}
             onChange={handleChange}
-            className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all"
+            className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent bg-gray-50 hover:bg-white transition-all"
           />
         </div>
 
@@ -145,7 +145,7 @@ export default function EditPodcastForm({ id, onSuccess }: Props) {
               value={form.danh_muc_id}
               onChange={handleChange}
               required
-              className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all"
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent bg-gray-50 hover:bg-white transition-all"
             >
               <option value="">-- Chọn danh mục --</option>
               {categories.map((cat: any) => (
@@ -162,7 +162,7 @@ export default function EditPodcastForm({ id, onSuccess }: Props) {
               name="trang_thai"
               value={form.trang_thai}
               onChange={handleChange}
-              className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all"
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent bg-gray-50 hover:bg-white transition-all"
             >
               <option value="Bật">Bật</option>
               <option value="Tắt">Tắt</option>
