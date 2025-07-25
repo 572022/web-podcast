@@ -120,7 +120,7 @@ const CategoryList: React.FC = () => {
               .put(`/${record.id}/status`, { kich_hoat: checked })
               .then(() => {
                 message.success("Đã cập nhật trạng thái");
-                fetchCategories(); // load lại bảng để thấy mục đó vẫn hiển thị
+                fetchCategories(); 
               })
               .catch(() => message.error("Lỗi trạng thái"))
           }

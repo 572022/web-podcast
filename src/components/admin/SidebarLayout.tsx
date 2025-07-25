@@ -3,14 +3,14 @@ import { useState } from "react";
 import {
   FiHome,
   FiBookOpen,
-  FiHeadphones,
+  // FiHeadphones,
   FiLayers,
   FiBarChart2,
    FiChevronDown,
   FiChevronRight,
   FiFilePlus,
   FiList,
-  FiFileText
+  // FiFileText
 }  
  from "react-icons/fi";
 import Breadcrumbs from "./Breadcrumbs";

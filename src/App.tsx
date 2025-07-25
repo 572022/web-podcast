@@ -3,17 +3,17 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AdminLogin from './components/AdminLogin';
 import Dashboard from './components/admin/Dashboard'
 import SidebarLayout from './components/admin/SidebarLayout'
-// import ListPodcast from './components/admin/ListPodcast'
+import Analytics from './components/admin/Analytics'
 
 import Qltailieu from './components/admin/tailieu/Qltailieu';
 // import Tailentailieu from './components/admin/tailieu/Tailentailieu';
 import UploadDocument from './components/admin/tailieu/UploadDocument';
-import DocumentDetail from './components/admin/tailieu/DocumentDetail';
+// import DocumentDetail from './components/admin/tailieu/DocumentDetail';
 import QlPodcast from './components/admin/podcast/QlPodcast';
 import UploadPodcast from './components/admin/podcast/UploadPodcast';
 import Breadcrumbs from './components/admin/Breadcrumbs';
-import { useImperativeHandle } from 'react';
-import EditPodcastForm from './components/admin/podcast/EditPodcastForm';
+// import { useImperativeHandle } from 'react';
+// import EditPodcastForm from './components/admin/podcast/EditPodcastForm';
 import DetailDocument from './components/admin/DetailDocument'
 import CategoryList from './components/admin/CategoryList'
 import { ToastContainer } from "react-toastify";
@@ -44,7 +44,7 @@ export default function App() {
         <Route path='detail/:id' element={<DetailDocument />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="category" element={<CategoryList />} />
-
+        <Route path="analytics" element={<Analytics />} />
         </Route>
       </Routes>
       <ToastContainer />
